@@ -1,4 +1,4 @@
-# This is my first project with open ai gym to teach an ai pong
+# This is my first project with open ai gym to teach an ai cartpole with a genetic algorithm
 
 # create environment
 import gym
@@ -68,6 +68,8 @@ def selectFromPopulation(sortedPop):
 	random.shuffle(nextGeneration)
 	return nextGeneration
 
+# DEPRECIATED FUNCTION FOR CREATING A CHILD #
+
 def createChild(actions1,actions2):
 	childActions = []
 
@@ -89,6 +91,21 @@ def createChildren(breeders):
 			newPopulation.append(createChild(breeders[i], breeders[len(breeders)-1-i]))
 	return newPopulation
 
+def mutateActions(individual):
+	actionToMutate = int(random.random() * len(individual))
+	# if (actionToMutate == 0):
+	# 	individual[] = int(random.randint(0,1) + individual[1:])
+	# else:
+	# 	individual = individual[:actionToMutate] + random.randint(0,1) + individual[actionToMutate+1:]
+	individual[actionToMutate] = random.randint(0,1)
+	return individual
+
+def mutatePopulation(population, chanceOfMutation):
+	for i in range(len(population)):
+		if random.random() * 100 < chanceOfMutation:
+			population[i] = mutateActions(population[i])
+	return population
+
 def runGeneticAlgorithm(evolutions):
 	currentScoredGeneration = []
 	currentGen = []
@@ -104,7 +121,8 @@ def runGeneticAlgorithm(evolutions):
 		# generation scored, create a new one
 		# select the best and a few randoms from current gen
 		selectedBreeders = selectFromPopulation(currentScoredGeneration)
-		currentGen = createChildren(selectedBreeders)
+		unmutatedGen = createChildren(selectedBreeders)
+		currentGen = mutatePopulation(unmutatedGen, 5)
 
 		
 def calculateMeanScore(population):
