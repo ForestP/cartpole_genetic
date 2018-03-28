@@ -15,8 +15,8 @@ env.reset() # This gets us the image
 
 populationSize = 1000
 goalSteps = 200 # number of stpes or actions to take
-bestSample = 450
-luckyRandom = 50
+bestSample = 45
+luckyRandom = 5
 currentGen = 0
 
 def generateFirstPopulation():
@@ -60,34 +60,96 @@ def scoreNewGeneration(population):
 def selectFromPopulation(sortedPop):
 	nextGeneration = []
 	for i in range(bestSample):
-		nextGeneration.append(sortedPop[i][1]) # gives its actions to new generation
+		nextGeneration.append(sortedPop[i]) # passes to new gen
 
 	for i in range(luckyRandom):
-		nextGeneration.append(random.choice(sortedPop)[1]) # gives actions of randomly selected
+		nextGeneration.append(random.choice(sortedPop)) # passes to new gen
 
 	random.shuffle(nextGeneration)
 	return nextGeneration
 
-# DEPRECIATED FUNCTION FOR CREATING A CHILD #
 
-def createChild(actions1,actions2):
+# def createChild(breeder1,breeder2):
+# 	childActions = []
+# 	firstDnaLength = int(breeder1[0] - 5) # score of breeder 1
+# 	secondDnaLength = int(breeder2[0] - 5) # score of breeder 2
+# 	actions1 = breeder1[1] # actions of breeder 1
+# 	actions2 = breeder2[1] # actions of breeder 2
+# 	for i in range(200):
+# 		# cut off last 3 actions because thats when they failed
+# 		if i < firstDnaLength:
+# 			#print('first')
+# 			childActions.append(actions1[i])
+# 		elif i > (firstDnaLength + secondDnaLength) :
+# 			#print('random')
+# 			childActions.append(random.randint(0,1)) # weve used all of breeder 1 and 2 actions
+# 		else:
+# 			#print('second')
+# 			childActions.append(actions2[i - firstDnaLength])
+# 	return childActions
+
+# def createChild(actions1,actions2):
+# 	childActions = []
+# 	count = 0
+# 	for i in range(200):
+# 		# cut off last 3 actions because thats when they failed
+# 		if count < 10 and i < len(actions1):
+# 			childActions.append(actions1[i])
+# 		elif count < 20 and i < len(actions2):
+# 			childActions.append(actions2[i])
+# 		else:
+# 			childActions.append(random.randint(0,1)) # weve used all of breeder 1 and 2 actions
+# 		count += 1
+# 		if count == 20:
+# 			count = 0
+
+# 	return childActions
+
+def createChild(breeder1,breeder2):
 	childActions = []
-
+	firstDnaLength = int(breeder1[0] - 5) # score of breeder 1
+	secondDnaLength = int(breeder2[0] - 5) # score of breeder 2
+	actions1 = breeder1[1] # actions of breeder 1
+	actions2 = breeder2[1] # actions of breeder 2
+	count = 0
 	for i in range(200):
 		# cut off last 3 actions because thats when they failed
-		if i < (len(actions1) - 3):
+		if count < 10 and i < firstDnaLength:
 			childActions.append(actions1[i])
-		elif i > (len(actions2) - 3) :
-			childActions.append(random.randint(0,1)) # weve used all of breeder 1 and 2 actions
-		else:
+		elif count < 20 and i < secondDnaLength:
 			childActions.append(actions2[i])
+		else:
+			childActions.append(random.randint(0,1)) # weve used all of breeder 1 and 2 actions
+		count += 1
+		if count == 20:
+			count = 0
+
 	return childActions
+
+# def createChild(breeder1,breeder2):
+# 	childActions = []
+# 	firstDnaLength = int(breeder1[0] - 5) # score of breeder 1
+# 	secondDnaLength = int(breeder2[0] - 5) # score of breeder 2
+# 	actions1 = breeder1[1] # actions of breeder 1
+# 	actions2 = breeder2[1] # actions of breeder 2
+# 	count = 0
+# 	for i in range(200):
+
+# 		individual = random.randint(0,1)
+# 		if individual == 0 and i < firstDnaLength:
+# 			childActions.append(actions1[i])
+# 		elif individual == 1 and i <secondDnaLength:
+# 			childActions.append(actions2[i])
+# 		else:
+# 			childActions.append(random.randint(0,1))
+
+# 	return childActions
 
 def createChildren(breeders):
 	newPopulation = []
 	for i in range(len(breeders)//2):
 		# each pair of breeders make 2 children
-		for j in range(2): 
+		for j in range(20): 
 			newPopulation.append(createChild(breeders[i], breeders[len(breeders)-1-i]))
 	return newPopulation
 
@@ -140,6 +202,6 @@ def calculateNumOverGoal(population):
 			count += 1
 	return count
 
-runGeneticAlgorithm(100)
+runGeneticAlgorithm(500)
 
 
